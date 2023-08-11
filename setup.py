@@ -27,7 +27,10 @@ setup(
 
     packages=find_packages(exclude=('tests',)),
 
-    install_requires=[],
+    install_requires=[
+        "arrow",
+        "formal-vector @ git+https://github.com/medthehatta/formal-vector",
+    ],
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
