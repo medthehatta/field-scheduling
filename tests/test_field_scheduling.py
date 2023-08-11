@@ -1,6 +1,6 @@
 import arrow
 
-from field_scheduling import reify_from_arrow
+from field_scheduling import AvailabilityField
 
 """
 
@@ -27,8 +27,10 @@ repeat(daily, flat(7pm, 8pm))
 
 
 def test_reify_from_arrow():
+    num_periods = 300
     start_ts = 1367900664
     start = arrow.get(start_ts)
-    end = arrow.get(start_ts + 60*15*300)
-    expected = (start, [1]*301)
-    assert reify_from_arrow(start, end) == expected
+    end = arrow.get(start_ts + 60*15*num_periods)
+    expected = (start, [1]*(num_periods + 1))
+    found = AvailabilityField.from_arrow_range(start, end).to_tuple()
+    assert found == expected

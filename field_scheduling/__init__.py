@@ -15,25 +15,36 @@ day_periods = 24 * hour_periods
 week_periods = 7 * day_periods
 
 
-def zeros(periods):
-    return [0]*(periods + 1)
+class AvailabilityField:
 
+    @classmethod
+    def zeros(cls, periods):
+        return cls([0]*(periods + 1))
 
-def flat(periods):
-    return [1]*(periods + 1)
+    @classmethod
+    def flat(cls, periods):
+        return cls([1]*(periods + 1))
 
+    @classmethod
+    def ramp(cls, periods):
+        return cls([n/periods for n in range(0, periods + 1)])
 
-def ramp(periods):
-    return [n/periods for n in range(0, periods + 1)]
+    @classmethod
+    def from_arrow_range(cls, start, end):
+        delta = end - start
+        minutes = ceil(delta.total_seconds() / 60)
+        periods = minutes // 15
+        return cls([1]*(periods + 1), start)
 
+    def __init__(self, field, start=None):
+        self.start = start
+        self.field = field
 
-def reify(start, field):
-    return (start, field)
+    def is_bound(self):
+        return not self.is_unbound()
 
+    def is_unbound(self):
+        return self.start is None
 
-def reify_from_arrow(start, end):
-    delta = end - start
-    minutes = ceil(delta.total_seconds() / 60)
-    periods = minutes // 15
-    return (start, [1]*(periods + 1))
-    
+    def to_tuple(self):
+        return (self.start, self.field)
